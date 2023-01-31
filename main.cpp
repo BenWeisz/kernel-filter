@@ -2,20 +2,30 @@
 
 #include "image/Image.hpp"
 #include "process/Kernel.hpp"
+#include "process/Naive.hpp"
+#include <chrono>
 
 int main() {
-    Image image("../images/boy.ppm");
-    image.WriteToFile("../images/out.ppm");
+    Image inFile("../images/boy.ppm");
+    Image outFile(inFile.GetWidth(), inFile.GetHeight(), 255);
+    Kernel kernel("../kernels/box.k", 3, 3);
 
-    Image a(2, 2, 255);
-    a.m_ChannelR[0] = 1.0;
-    a.m_ChannelR[2] = 1.0;
-    a.WriteToFile("../images/test.ppm");
+    Naive naive(&inFile, &outFile, &kernel);
 
-    Kernel k("../kernels/box.k", 3, 3);
-    for (auto& e : k.GetData()) {
-        std::cout << e << " ";
+    int N = 30;
+    double totalTime = 0;
+
+    for (int i = 0; i < N; i++) {
+        auto start = std::chrono::high_resolution_clock::now();
+        naive.Run();
+        auto end = std::chrono::high_resolution_clock::now();
+        totalTime += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
     }
+
+    totalTime = totalTime / (N * 1000000);
+    std::cout << "Naive Runtime: " << totalTime << "ms" << std::endl;
+
+    outFile.WriteToFile("../images/test.ppm");
 
     return 0;
 }

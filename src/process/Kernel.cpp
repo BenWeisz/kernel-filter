@@ -1,6 +1,8 @@
 #include "process/Kernel.hpp"
 
 Kernel::Kernel(const std::string& path, const int width, const int height) : m_Width(width), m_Height(height) {
+    assert(width % 2 == 1);
+    assert(height % 2 == 1);
     std::ifstream file(path, std::ios_base::binary);
 
     // Ensure the file is open

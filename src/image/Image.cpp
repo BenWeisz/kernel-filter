@@ -28,6 +28,7 @@ Image::Image(const std::string& path) : m_Width(-1), m_Height(-1) {
     file.close();
 }
 
+// This constructor should only be used for making a programatic image and saving to file
 Image::Image(const int width, const int height, const int quanta) : m_Width(width),
                                                                     m_Height(height),
                                                                     m_Quanta(quanta),
@@ -82,9 +83,6 @@ int Image::LoadHeader(std::ifstream& file) {
 
     m_Quanta = std::stoi(std::string(&quantaBuffer[0]));
 
-    // Read the 0x0c character
-    file.read(&buffer, 1);
-
     return 0;
 }
 
@@ -92,7 +90,7 @@ void Image::LoadData(std::ifstream& file) {
     char buffer;
     for (int i = 0; i < 3 * m_Width * m_Height; i++) {
         file.read(&buffer, 1);
-        float colour = (float)buffer / m_Quanta;
+        float colour = (float)((unsigned char)buffer) / m_Quanta;
         if (i % 3 == 0)
             m_ChannelR.push_back(colour);
         else if (i % 3 == 1)
@@ -136,7 +134,6 @@ void Image::WriteToFile(const std::string& path) const {
         data[i++] = quantaStr[j];
     }
     data[i++] = 0x0a;
-    // data[i++] = 0x0c;
 
     // Write the image data
     for (int j = 0; j < m_Width * m_Height; j++) {

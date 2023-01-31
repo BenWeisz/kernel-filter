@@ -12,6 +12,5 @@ add_executable(Filter main.cpp)
 target_include_directories(Filter PUBLIC include)
 
 target_sources(Filter PUBLIC
-    src/process/Control.cpp
     src/process/Kernel.cpp
     src/image/Image.cpp)

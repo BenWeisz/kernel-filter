@@ -21,4 +21,6 @@ class Image {
     std::vector<float> m_ChannelR;
     std::vector<float> m_ChannelG;
     std::vector<float> m_ChannelB;
+    inline int GetWidth() const { return m_Width; }
+    inline int GetHeight() const { return m_Height; }
 };
