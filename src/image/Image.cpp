@@ -28,6 +28,14 @@ Image::Image(const std::string& path) : m_Width(-1), m_Height(-1) {
     file.close();
 }
 
+Image::Image(const int width, const int height, const int quanta) : m_Width(width),
+                                                                    m_Height(height),
+                                                                    m_Quanta(quanta),
+                                                                    m_ChannelR(width * height, 0),
+                                                                    m_ChannelG(width * height, 0),
+                                                                    m_ChannelB(width * height, 0) {
+}
+
 int Image::LoadHeader(std::ifstream& file) {
     char type[2];
     file.read(type, 2);
@@ -105,7 +113,7 @@ void Image::WriteToFile(const std::string& path) const {
     std::string widthStr = std::to_string(m_Width);
     std::string heightStr = std::to_string(m_Height);
     std::string quantaStr = std::to_string(m_Quanta);
-    int headerLength = 7 + widthStr.length() + heightStr.length() + quantaStr.length();
+    int headerLength = 6 + widthStr.length() + heightStr.length() + quantaStr.length();
 
     int dataLength = m_Width * m_Height * 3;
     char* data = new char[headerLength + dataLength];
@@ -128,7 +136,7 @@ void Image::WriteToFile(const std::string& path) const {
         data[i++] = quantaStr[j];
     }
     data[i++] = 0x0a;
-    data[i++] = 0x0c;
+    // data[i++] = 0x0c;
 
     // Write the image data
     for (int j = 0; j < m_Width * m_Height; j++) {
@@ -142,7 +150,4 @@ void Image::WriteToFile(const std::string& path) const {
 
     delete[] data;
     file.close();
-}
-
-void Image::SetPixel(const int y, const int x, const float value) {
 }
